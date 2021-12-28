@@ -82,7 +82,8 @@ public class MapGenerator : MonoBehaviour
         {
             int zPos = Random.Range(0, lines);
             zPositions.Add(zPos);
-            for (int k=1; k<pathWidth; k++) {
+            for (int k = 1; k < pathWidth; k++)
+            {
                 zPositions.Add(zPos);
                 if (i < mapWidth - 2) i++;
                 else break;
