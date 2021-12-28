@@ -76,10 +76,19 @@ public class MapGenerator : MonoBehaviour
     {
         // First, random each column position
         List<int> zPositions = new List<int>();
+        int pathWidth = 2;
         int lines = 4;
         for (int i = 0; i < mapWidth - 2; i++)
         {
-            zPositions.Add(Random.Range(0, lines));
+            int zPos = Random.Range(0, lines);
+            zPositions.Add(zPos);
+            for (int k=1; k<pathWidth; k++) {
+                zPositions.Add(zPos);
+                if (i < mapWidth - 2) i++;
+                else break;
+            }
+            // old version with pathWidth = 1
+            // zPositions.Add(Random.Range(0, lines));
         }
         zPositions.Add(0);
 
