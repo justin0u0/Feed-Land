@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
-public class MapGenerator : MonoBehaviour
+public class OldMapGenerator : MonoBehaviour
 {
     // Start is called before the first frame update
     public GameObject mapPrefab;
@@ -30,11 +29,9 @@ public class MapGenerator : MonoBehaviour
     private int blueMinesNum;
     private int mapWidth;
     private int mapHeight;
-    private int prevZPoint;
     private List<List<Vector3>> paths;
-    // private List<Vector3> elementPositions;
-    private List<System.Tuple<Vector3, GameObject>> elementPositions;
-    
+    private List<Vector3> elementPositions;
+
 
     void Start()
     {
@@ -43,11 +40,31 @@ public class MapGenerator : MonoBehaviour
         mapHeight = 14;
         currentMapIdx = 0;
         cannonPlaceNum = 6;
-        prevZPoint = 0;
         paths = new List<List<Vector3>>();
 
         for (int i = 0; i < initMapNum; i++)
         {
+            // elementPositions = new List<Vector3>();
+            // // create ground first
+            // Vector3 mapPos = new Vector3(mapIdx * mapWidth, 0f, 0f);
+            // Instantiate(mapPrefab, mapPos, Quaternion.identity);
+            // // generate path on the map
+            // GeneratePath(new Vector3(-13.5f + mapIdx * mapWidth, 0.5f, -6.5f));
+            // // generate elements on the map
+            // // redTreesNum = Random.Range(minLevel1ElementNum, maxLevel1ElementNum);
+            // // redMinesNum = Random.Range(minLevel1ElementNum, maxLevel1ElementNum);
+            // // level1
+            // redTreesNum = Level1ElementNum;
+            // redMinesNum = Level1ElementNum;
+            // GenerateElement(redTreesNum, new Vector3(-13.5f + mapIdx * mapWidth, 0.5f, 6.5f), redTreePrefab);
+            // GenerateElement(redMinesNum, new Vector3(-13.5f + mapIdx * mapWidth, 0.5f, 6.5f), redMinePrefab);
+            // // level2
+            // blueTreesNum = Level2ElementNum;
+            // blueMinesNum = Level2ElementNum;
+            // GenerateElement(blueTreesNum, new Vector3(-13.5f + mapIdx * mapWidth, 0.5f, 6.5f), blueTreePrefab);
+            // GenerateElement(blueMinesNum, new Vector3(-13.5f + mapIdx * mapWidth, 0.5f, 6.5f), blueMinePrefab);
+            // // generate cannonPlace on the map
+            // GenerateCannonPlace(new Vector3(-13.5f + mapIdx * mapWidth, 0f, -1.5f));
             GenerateMap();
         }
         isInitialized = true;
@@ -70,8 +87,7 @@ public class MapGenerator : MonoBehaviour
 
     private void GenerateMap()
     {
-        // elementPositions = new List<Vector3>();
-        elementPositions = new List<System.Tuple<Vector3, GameObject>>();
+        elementPositions = new List<Vector3>();
         // create ground first
         Vector3 mapPos = new Vector3(currentMapIdx * mapWidth, 0f, 0f);
         Instantiate(mapPrefab, mapPos, Quaternion.identity);
@@ -81,17 +97,17 @@ public class MapGenerator : MonoBehaviour
         // redTreesNum = Random.Range(minLevel1ElementNum, maxLevel1ElementNum);
         // redMinesNum = Random.Range(minLevel1ElementNum, maxLevel1ElementNum);
         // level1
-        // redTreesNum = Level1ElementNum;
-        // redMinesNum = Level1ElementNum;
-        // GenerateElement(redTreesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), redTreePrefab);
-        // GenerateElement(redMinesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), redMinePrefab);
-        // // level2
-        // blueTreesNum = Level2ElementNum;
-        // blueMinesNum = Level2ElementNum;
-        // GenerateElement(blueTreesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), blueTreePrefab);
-        // GenerateElement(blueMinesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), blueMinePrefab);
-        // // generate cannonPlace on the map
-        // GenerateCannonPlace(new Vector3(-13.5f + currentMapIdx * mapWidth, 0f, -1.5f));
+        redTreesNum = Level1ElementNum;
+        redMinesNum = Level1ElementNum;
+        GenerateElement(redTreesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), redTreePrefab);
+        GenerateElement(redMinesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), redMinePrefab);
+        // level2
+        blueTreesNum = Level2ElementNum;
+        blueMinesNum = Level2ElementNum;
+        GenerateElement(blueTreesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), blueTreePrefab);
+        GenerateElement(blueMinesNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), blueMinePrefab);
+        // generate cannonPlace on the map
+        GenerateCannonPlace(new Vector3(-13.5f + currentMapIdx * mapWidth, 0f, -1.5f));
         currentMapIdx++;
     }
 
@@ -106,9 +122,9 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    private void GenerateElementPosition(int total, Vector3 offset, GameObject prefab)
+    private void GenerateElement(int total, Vector3 offset, GameObject prefab)
     {
-        HashSet<Vector3> topLeftPositions = new HashSet<Vector3>();
+        HashSet<Vector3> element = new HashSet<Vector3>();
 
         // first, random generate the position
         for (int i = 0; i < total; i++)
@@ -116,9 +132,10 @@ public class MapGenerator : MonoBehaviour
             Vector3 point;
             do
             {
-                point = new Vector3(Random.Range(0, mapWidth - 2), 0f, (-1) * Random.Range(0, mapHeight - 2));
+                point = new Vector3(Random.Range(0, mapWidth - 2), 0f, (-1) * Random.Range(0, 5));
             } while (CheckIfElementOverlay(point));
-            topLeftPositions.Add(point);
+            elementPositions.Add(point);
+            element.Add(point);
         }
 
         // next, place the element according to the column position
@@ -133,28 +150,25 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        foreach (Vector3 tfpos in topLeftPositions)
+        foreach (Vector3 topLeftPoint in element)
         {
             int num = Random.Range(3, 7);
-            Vector3 position = offset + tfpos;
+            Vector3 position = offset + topLeftPoint;
             Shuffle(box);
 
             for (int i = 0; i < num; i++)
             {
-                System.Tuple<Vector3, GameObject> tp = new System.Tuple<Vector3, GameObject> (position + box[i], prefab);
-                elementPositions.Add(tp);
+                Instantiate(prefab, position + box[i], Quaternion.identity);
             }
         }
     }
 
     private bool CheckIfElementOverlay(Vector3 position)
     {
-        for (int x=0; x<3; x++) {
-            for (int z=0; z<3; z++) {
-                bool contians = elementPositions.Any(m => m.Item1 == new Vector3(x, 0f, z));
-                if (contians) return true;
-                // if (elementPositions.Contains(position + new Vector3(x, 0f, z))) return true;
-            }
+        for (int x = -2; x <= 2; x++)
+        {
+            for (int z = -2; z <= 2; z++)
+                if (elementPositions.Contains(position + new Vector3(x, 0f, z))) return true;
         }
         return false;
     }
@@ -163,23 +177,22 @@ public class MapGenerator : MonoBehaviour
     {
         // First, random each column position
         List<int> zPositions = new List<int>();
-        int pathWidth = 3;
-        zPositions.Add(prevZPoint);
-        for (int i = 0; i < mapWidth - 1; i++)
+        int pathWidth = 2;
+        int lines = 3;
+        for (int i = 0; i < mapWidth - 2; i++)
         {
-            int zPos = Random.Range(0, mapHeight);
+            int zPos = Random.Range(0, lines);
             zPositions.Add(zPos);
             for (int k = 1; k < pathWidth; k++)
             {
                 zPositions.Add(zPos);
-                if (i == mapWidth - 2) prevZPoint = zPos;
-                if (i < mapWidth - 1) i++;
+                if (i < mapWidth - 2) i++;
                 else break;
             }
             // old version with pathWidth = 1
             // zPositions.Add(Random.Range(0, lines));
         }
-        
+        zPositions.Add(0);
 
         // direction
         // 1 -> up
@@ -262,10 +275,6 @@ public class MapGenerator : MonoBehaviour
             if (xPositions.Contains(xPos + i)) return true;
         }
         return false;
-    }
-
-    private void GeneratePrefab(Vector3 position, GameObject prefab) {
-        Instantiate(prefab, position, Quaternion.identity);
     }
 
     public Vector3 ResetPlayerPosition()
