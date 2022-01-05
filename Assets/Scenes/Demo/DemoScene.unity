@@ -3647,6 +3647,26 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
         type: 3}
+      propertyPath: bprefab.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: treePrefab.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: minePrefab.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: elementNum.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
       propertyPath: unicorn
       value: 
       objectReference: {fileID: 460517230}
@@ -3669,6 +3689,45 @@ PrefabInstance:
         type: 3}
       propertyPath: initMapNum
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: level
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: treePrefab.Array.data[0]
+      value: 
+      objectReference: {fileID: 7218559754734676202, guid: dbfc9f447444746ae9d1710e1ea7a948,
+        type: 3}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: treePrefab.Array.data[1]
+      value: 
+      objectReference: {fileID: 302389472426655255, guid: b5513e4b773a045689bf36b9a3f2ce4d,
+        type: 3}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: minePrefab.Array.data[0]
+      value: 
+      objectReference: {fileID: 3424928520502617047, guid: 1b5b7b5cffa65422c9ccdec62a68812f,
+        type: 3}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: minePrefab.Array.data[1]
+      value: 
+      objectReference: {fileID: 3723393909993456683, guid: 2a341d22fa965432587d19b13049b322,
+        type: 3}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: elementNum.Array.data[0]
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1822169290377872064, guid: fac5556aab6584535bcd9c97aef8f6ab,
+        type: 3}
+      propertyPath: elementNum.Array.data[1]
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1822169290377872065, guid: fac5556aab6584535bcd9c97aef8f6ab,
         type: 3}
