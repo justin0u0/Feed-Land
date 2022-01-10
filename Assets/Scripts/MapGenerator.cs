@@ -130,17 +130,18 @@ public class MapGenerator : MonoBehaviour
     private List<System.Tuple<Vector3, GameObject>> GenerateElementPosition(List<int> total, Vector3 offset, List<GameObject> prefab)
     {
         List<System.Tuple<Vector3, GameObject>> elementPositions = new List<System.Tuple<Vector3, GameObject>>();
-        HashSet<Vector3> topLeftPositions = new HashSet<Vector3>();
+        
 
-        for (int idx=0; idx<total.Count; idx++) {
+        for (int idx=0; idx < total.Count; idx++) {
+            HashSet<Vector3> topLeftPositions = new HashSet<Vector3>();
             // first, random generate the position from the whole map
             for (int i = 0; i < total[idx]; i++)
             {
                 Vector3 point;
                 do
                 {
-                    point = new Vector3(Random.Range(0, mapWidth - 2), 0f, (-1) * Random.Range(0, mapHeight - 2));
-                } while (CheckIfElementOverlay(point, elementPositions));
+                    point = new Vector3(Random.Range(0, mapWidth - 2), 0f, -(Random.Range(0, mapHeight - 2)));
+                } while (CheckIfElementOverlay(point + offset, elementPositions));
                 topLeftPositions.Add(point);
             }
 
@@ -158,7 +159,7 @@ public class MapGenerator : MonoBehaviour
 
             foreach (Vector3 tfpos in topLeftPositions)
             {
-                int num = Random.Range(3, 7);
+                int num = Random.Range(5, 7);
                 Vector3 position = offset + tfpos;
                 Shuffle(box);
 
@@ -177,8 +178,14 @@ public class MapGenerator : MonoBehaviour
     {
         for (int x=0; x<3; x++) {
             for (int z=0; z<3; z++) {
-                bool contains = elementPositions.Any(m => m.Item1 == new Vector3(x, 0f, z));
-                if (contains) return true;
+                foreach (System.Tuple<Vector3, GameObject> tp in elementPositions) {
+                    Vector3 vec = position + new Vector3(x, 0f, -z);
+                    if (tp.Item1 == vec) {
+                        return true;
+                    }
+                }
+                // bool contains = elementPositions.Any(m => m.Item1 == (position + new Vector3(x, 0f, -z)));
+                // if (contains) return true;
             }
         }
         return false;
@@ -189,20 +196,21 @@ public class MapGenerator : MonoBehaviour
     {
         // First, random each column position
         List<int> zPositions = new List<int>();
-        int pathWidth = 3;
+        int pathWidth = 5;
         zPositions.Add(prevZPoint);
-        for (int i = 0; i < mapWidth - 1; i++)
+        
+        for (int i = 0; i < mapWidth - 1;)
         {
             int zPos = Random.Range(0, mapHeight);
-            zPositions.Add(zPos);
-            for (int k = 1; k < pathWidth; k++)
+            for (int k = 0; k < pathWidth; k++)
             {
-                zPositions.Add(zPos);
                 if (i == mapWidth - 2) prevZPoint = zPos;
-                if (i < mapWidth - 1) i++;
-                else break;
+                zPositions.Add(zPos);
+                i++;
+                if (i >= mapWidth - 1) break;
             }
         }
+        Debug.Log($"zPosition size: {zPositions.Count}");
         
 
         // direction
@@ -297,7 +305,16 @@ public class MapGenerator : MonoBehaviour
     private void GenerateElementsPrefab(List<System.Tuple<Vector3, GameObject>> elementPositions, List<Vector3> path, List<Vector3> cannonPlacePositions) {
         // only create the prefab where the position isn't occupied by cannonPlace or path
         foreach (System.Tuple<Vector3, GameObject> tp in elementPositions) {
-            if (!path.Contains(tp.Item1) && !cannonPlacePositions.Contains(tp.Item1)) Instantiate(tp.Item2, tp.Item1, Quaternion.identity);
+            bool isPathOverlay = false;
+            for (int x=-1; x<=1 && !isPathOverlay; x++) {
+                for (int z=-1; z<=1 && !isPathOverlay; z++) {
+                    if (path.Contains(tp.Item1 + new Vector3(x, 0f, z))) {
+                        isPathOverlay = true;
+                    }
+                }
+            }
+            // if (!isPathOverlay && !cannonPlacePositions.Contains(tp.Item1)) Debug.Log($"position: {tp.Item1}");
+            if (!isPathOverlay && !cannonPlacePositions.Contains(tp.Item1)) Instantiate(tp.Item2, tp.Item1, Quaternion.identity);
         }
     }
 
