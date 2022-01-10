@@ -40,7 +40,7 @@ public class MapGenerator : MonoBehaviour
     private int mapHeight;
     private int prevZPoint;
     private List<List<Vector3>> paths;
-    
+
 
     void Start()
     {
@@ -48,8 +48,8 @@ public class MapGenerator : MonoBehaviour
         mapWidth = 28;
         mapHeight = 14;
         currentMapIdx = 0;
-        prevZPoint = mapHeight-1;
-        
+        prevZPoint = mapHeight - 1;
+
         paths = new List<List<Vector3>>();
 
         for (int i = 0; i < initMapNum; i++)
@@ -88,9 +88,10 @@ public class MapGenerator : MonoBehaviour
         // Initialize some variables
         List<int> total = new List<int>();
         List<GameObject> prefab = new List<GameObject>();
-        cannonPlaceNum = Random.Range(5,8);
-        
-        for (int j=0; j<level; j++) {
+        cannonPlaceNum = Random.Range(5, 8);
+
+        for (int j = 0; j < level; j++)
+        {
             // treesNum[j] = 0;
             prefab.Add(treePrefab[j]);
             total.Add(elementNum[j]);
@@ -107,7 +108,7 @@ public class MapGenerator : MonoBehaviour
         path = GeneratePath(new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f));
 
         // generate cannonPlace on the map
-        cannonPlacePositions = GenerateCannonPlace(cannonPlaceNum ,new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), path);
+        cannonPlacePositions = GenerateCannonPlace(cannonPlaceNum, new Vector3(-13.5f + currentMapIdx * mapWidth, 0.5f, 6.5f), path);
 
         // generate elements on the map
         GenerateElementsPrefab(elementPositions, path, cannonPlacePositions);
@@ -130,9 +131,10 @@ public class MapGenerator : MonoBehaviour
     private List<System.Tuple<Vector3, GameObject>> GenerateElementPosition(List<int> total, Vector3 offset, List<GameObject> prefab)
     {
         List<System.Tuple<Vector3, GameObject>> elementPositions = new List<System.Tuple<Vector3, GameObject>>();
-        
 
-        for (int idx=0; idx < total.Count; idx++) {
+
+        for (int idx = 0; idx < total.Count; idx++)
+        {
             HashSet<Vector3> topLeftPositions = new HashSet<Vector3>();
             // first, random generate the position from the whole map
             for (int i = 0; i < total[idx]; i++)
@@ -165,22 +167,26 @@ public class MapGenerator : MonoBehaviour
 
                 for (int i = 0; i < num; i++)
                 {
-                    System.Tuple<Vector3, GameObject> tp = new System.Tuple<Vector3, GameObject> (position + box[i], prefab[idx]);
+                    System.Tuple<Vector3, GameObject> tp = new System.Tuple<Vector3, GameObject>(position + box[i], prefab[idx]);
                     elementPositions.Add(tp);
                 }
             }
         }
-        
+
         return elementPositions;
     }
 
     private bool CheckIfElementOverlay(Vector3 position, List<System.Tuple<Vector3, GameObject>> elementPositions)
     {
-        for (int x=0; x<3; x++) {
-            for (int z=0; z<3; z++) {
-                foreach (System.Tuple<Vector3, GameObject> tp in elementPositions) {
+        for (int x = 0; x < 3; x++)
+        {
+            for (int z = 0; z < 3; z++)
+            {
+                foreach (System.Tuple<Vector3, GameObject> tp in elementPositions)
+                {
                     Vector3 vec = position + new Vector3(x, 0f, -z);
-                    if (tp.Item1 == vec) {
+                    if (tp.Item1 == vec)
+                    {
                         return true;
                     }
                 }
@@ -198,7 +204,7 @@ public class MapGenerator : MonoBehaviour
         List<int> zPositions = new List<int>();
         int pathWidth = 5;
         zPositions.Add(prevZPoint);
-        
+
         for (int i = 0; i < mapWidth - 1;)
         {
             int zPos = Random.Range(0, mapHeight);
@@ -211,7 +217,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
         Debug.Log($"zPosition size: {zPositions.Count}");
-        
+
 
         // direction
         // 1 -> up
@@ -265,25 +271,29 @@ public class MapGenerator : MonoBehaviour
     {
         List<Vector3> cannonPlacePositions = new List<Vector3>();
         // first, random the column position
-        for (int i=0; i<total; i++) {
+        for (int i = 0; i < total; i++)
+        {
             Vector3 point;
-            do {
-                point = new Vector3(Random.Range(1, mapWidth-2), 0f, -(Random.Range(1, mapHeight-2)));
-            } while(CheckIfCannonPlaceOverlay(offset + point, cannonPlacePositions, path));
+            do
+            {
+                point = new Vector3(Random.Range(1, mapWidth - 2), 0f, -(Random.Range(1, mapHeight - 2)));
+            } while (CheckIfCannonPlaceOverlay(offset + point, cannonPlacePositions, path));
 
             // Generate cannonPlace prefab accroding to the point
             Vector3 position = offset + point;
             Instantiate(cannonPlacePrefab, position + new Vector3(0f, 0.5f, 0f), Quaternion.identity);
 
             // add the occupied point to the cannonPlacePositions
-            for (int x=-1; x<=1; x++) {
-                for (int z=-1; z<=1; z++) {
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
                     cannonPlacePositions.Add(position + new Vector3(x, 0f, -z));
                 }
             }
-            
+
         }
-        
+
         return cannonPlacePositions;
     }
 
@@ -291,9 +301,10 @@ public class MapGenerator : MonoBehaviour
     {
         // If there's already a path or a cannonPlace in the position -> overlay
         // Else -> valid position to place the cannonPlace
-        for (int x=-1; x<=1; x++) 
+        for (int x = -1; x <= 1; x++)
         {
-            for (int z=-1; z<=1; z++) {
+            for (int z = -1; z <= 1; z++)
+            {
                 Vector3 position = point + new Vector3(x, 0f, -z);
                 if (cannonPlacePositions.Contains(position)) return true;
                 if (path.Contains(position)) return true;
@@ -302,13 +313,18 @@ public class MapGenerator : MonoBehaviour
         return false;
     }
 
-    private void GenerateElementsPrefab(List<System.Tuple<Vector3, GameObject>> elementPositions, List<Vector3> path, List<Vector3> cannonPlacePositions) {
+    private void GenerateElementsPrefab(List<System.Tuple<Vector3, GameObject>> elementPositions, List<Vector3> path, List<Vector3> cannonPlacePositions)
+    {
         // only create the prefab where the position isn't occupied by cannonPlace or path
-        foreach (System.Tuple<Vector3, GameObject> tp in elementPositions) {
+        foreach (System.Tuple<Vector3, GameObject> tp in elementPositions)
+        {
             bool isPathOverlay = false;
-            for (int x=-1; x<=1 && !isPathOverlay; x++) {
-                for (int z=-1; z<=1 && !isPathOverlay; z++) {
-                    if (path.Contains(tp.Item1 + new Vector3(x, 0f, z))) {
+            for (int x = -1; x <= 1 && !isPathOverlay; x++)
+            {
+                for (int z = -1; z <= 1 && !isPathOverlay; z++)
+                {
+                    if (path.Contains(tp.Item1 + new Vector3(x, 0f, z)))
+                    {
                         isPathOverlay = true;
                     }
                 }
